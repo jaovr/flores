@@ -13,10 +13,9 @@ struct Flor {
 };
 
 void representantes_iniciais(int k, Flor *vetor_flores, int tamanho){
-    srand(time(NULL));
-    int indice_flor_representante = 0;
        for(int i = 1; i <= k; i++){
-           indice_flor_representante = rand() % tamanho;
+           int indice_flor_representante = rand() % tamanho;
+           cout << i << endl;
            vetor_flores[indice_flor_representante].grupo = i;
        }
 }
@@ -24,11 +23,12 @@ void representantes_iniciais(int k, Flor *vetor_flores, int tamanho){
 
 int main() {
 
-    //declaração de variaveis.
+    //declaração de variaveis
     int tamanho = 0;
     int k = 0;
     int indice_loop = 0; 
     string linha;
+    srand(time(0));
 
     ifstream arquivo_flores("iris_petalas.csv"); //importando o arquivo csv com os dados das flores.
 
@@ -43,7 +43,6 @@ int main() {
                                     neste caso foi ele foi utilizado para "retirar" a legenda do arquivo */
 
     tamanho -= 1; //tamanho teve seu total subtraido por 1, porque após a leitura do tamanho do arquivo o resultado considerava a legenda + as 150 linhas.
-
     Flor *vetor_flores = new Flor[tamanho]; //criando um vetor dinamicamente e alocando na memoria.
 
       for (int i = 0; i < tamanho; i++) {
@@ -51,17 +50,21 @@ int main() {
           getline(arquivo_flores, largura, ',');
           getline(arquivo_flores, altura, ',');   
           getline(arquivo_flores, especie);          
-          vetor_flores[i].petal_length = atof(largura.c_str()); //c_str() utilizado para converter uma string em um array de char.
-          vetor_flores[i].petal_width = atof(altura.c_str()); //atof() utilizado para converter um array de char para um numero tipo double. 
+          vetor_flores[i].petal_length = stod(largura); 
+          vetor_flores[i].petal_width = stod(altura); 
           vetor_flores[i].variety = especie;
           //Looping para ler todo o arquivo e em seguida, armazenar os dados no vetor que foi criado dinamicamente.
       }
  
     cout << "Insira a quantidade de flores do conjunto para serem os representantes iniciais de seus grupos" << endl;
     cin >> k;
+ 
+    representantes_iniciais(k, vetor_flores, tamanho);
 
-    representantes_iniciais( k, vetor_flores, tamanho);
-
+    for (int i = 0; i < tamanho; i++) { 
+          cout <<  i << " " << vetor_flores[i].grupo << endl;
+          //Looping para ler todo o arquivo e em seguida, armazenar os dados no vetor que foi criado dinamicamente.
+      }
 
     delete[] vetor_flores;
 
@@ -69,4 +72,3 @@ int main() {
 
     return 0;
 }
-
