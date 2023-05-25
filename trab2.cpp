@@ -12,7 +12,7 @@ struct Flor {
     int grupo = 0;
 };
 
-double calculo_distancia(Flor representante, Flor flor) {
+double calculo_distancia(Flor flor, Flor representante) {
     double subtr_alt = representante.petal_length - flor.petal_length;
     double subtr_larg = representante.petal_width - flor.petal_width;
     return sqrt((subtr_alt * subtr_alt) + (subtr_larg * subtr_larg));
@@ -34,7 +34,7 @@ void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
         // Alocar cada flor ao grupo mais próximo
         for (int i = 0; i < tamanho; i++) {
             double menor_distancia = calculo_distancia(vetor_flores[i], representantes[0]);
-            int indice_grupo = 1;
+            int indice_grupo = 0;
 
             // Encontrar o representante mais próximo
             for (int j = 1; j < k; j++) {
@@ -75,15 +75,16 @@ void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
     delete[] representantes;
 }
 
-void exportar_grupos_flores(int tamanho, Flor* vetor_flores){
+void exportar_grupos_flores(int tamanho, Flor* vetor_flores) {
     ofstream arquivo_flores_grupos("flores_grupos.csv", ios::out);
 
     arquivo_flores_grupos << left << setw(15) << "petal_length" << setw(15) << "petal_width" << setw(15) << "variety" << setw(15) << "group" << endl;
 
     for (int i = 0; i < tamanho; i++) {
-        arquivo_flores_grupos << left << setw(15) << vetor_flores[i].petal_length << setw(15) << vetor_flores[i].petal_width << setw(15) << vetor_flores[i].variety << setw(1) << vetor_flores[i].grupo << endl;
+        arquivo_flores_grupos << left << setw(15) << vetor_flores[i].petal_length << setw(15) << vetor_flores[i].petal_width << setw(15) << vetor_flores[i].variety << setw(15) << vetor_flores[i].grupo << endl;
     }
 
+    arquivo_flores_grupos.close();
 }
 
 int main() {
