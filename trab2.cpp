@@ -19,10 +19,9 @@ double calculo_distancia(Flor flor, Flor representante) {
 }
 
 void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
-    // Vetor para armazenar os representantes
+
     Flor* representantes = new Flor[k];
 
-    // Inicializar os representantes aleatoriamente
     for (int i = 0; i < k; i++) {
         int indice = rand() % tamanho;
         vetor_flores[indice].grupo = i;
@@ -30,14 +29,14 @@ void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
     }
 
     // Repetir o processo iteracoes vezes
-    for (int iter = 0; iter < iteracoes; iter++) {
+    for (int z = 0; z < iteracoes; z++) {
         // Alocar cada flor ao grupo mais próximo
         for (int i = 0; i < tamanho; i++) {
             double menor_distancia = calculo_distancia(vetor_flores[i], representantes[0]);
             int indice_grupo = 0;
 
             // Encontrar o representante mais próximo
-            for (int j = 1; j < k; j++) {
+            for (int j = 0; j < k; j++) {
                 double distancia = calculo_distancia(vetor_flores[i], representantes[j]);
                 if (distancia < menor_distancia) {
                     menor_distancia = distancia;
@@ -91,6 +90,7 @@ int main() {
     int tamanho = 0;
     int k = 0;
     string linha;
+    string legenda;
     srand(time(NULL));
 
     ifstream arquivo_flores("iris_petalas.csv", ios::in);
@@ -102,7 +102,7 @@ int main() {
     arquivo_flores.clear();
     arquivo_flores.seekg(0, ios::beg);
 
-    getline(arquivo_flores, linha);
+    getline(arquivo_flores, legenda);
 
     tamanho -= 1;
     Flor* vetor_flores = new Flor[tamanho];
@@ -111,7 +111,7 @@ int main() {
         string largura, altura, especie;
         getline(arquivo_flores, largura, ',');
         getline(arquivo_flores, altura, ',');
-        getline(arquivo_flores, especie);
+        getline(arquivo_flores, especie, '\n');
         vetor_flores[i].petal_length = stod(largura);
         vetor_flores[i].petal_width = stod(altura);
         vetor_flores[i].variety = especie;
@@ -120,7 +120,7 @@ int main() {
     cout << "Digite a quantidade de grupos que voce deseja separar as flores: " << endl;
     cin >> k;
 
-    int iteracoes = 100;
+    int iteracoes = 00;
 
     definicao_grupos(vetor_flores, tamanho, k, iteracoes);
 
