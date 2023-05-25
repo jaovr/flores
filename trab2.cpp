@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <string>
+#include <iomanip>
 #include <cmath>
 using namespace std;
 
@@ -12,59 +12,118 @@ struct Flor {
     int grupo = 0;
 };
 
-void representantes_iniciais(int k, Flor *vetor_flores, int tamanho){
-       for(int i = 1; i <= k; i++){
-           int indice_flor_representante = rand() % tamanho;
-           cout << i << endl;
-           vetor_flores[indice_flor_representante].grupo = i;
-       }
+double calculo_distancia(Flor representante, Flor flor) {
+    double subtr_alt = representante.petal_length - flor.petal_length;
+    double subtr_larg = representante.petal_width - flor.petal_width;
+    return sqrt((subtr_alt * subtr_alt) + (subtr_larg * subtr_larg));
 }
 
+void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
+    // Vetor para armazenar os representantes
+    Flor* representantes = new Flor[k];
 
-int main() {
-
-    //declaração de variaveis
-    int tamanho = 0;
-    int k = 0;
-    int indice_loop = 0; 
-    string linha;
-    srand(time(0));
-
-    ifstream arquivo_flores("iris_petalas.csv"); //importando o arquivo csv com os dados das flores.
-
-    while (getline(arquivo_flores, linha)) {  //lendo o arquivo para definir o tamanho em que o vetor deverá alocado.
-        tamanho++; 
+    // Inicializar os representantes aleatoriamente
+    for (int i = 0; i < k; i++) {
+        int indice = rand() % tamanho;
+        vetor_flores[indice].grupo = i;
+        representantes[i] = vetor_flores[indice];
     }
 
-    arquivo_flores.clear(); //limpando o ponteiro.
-    arquivo_flores.seekg(0, ios::beg); //redefinindo o ponteiro para o inicio do arquivo novamente.
+    // Repetir o processo iteracoes vezes
+    for (int iter = 0; iter < iteracoes; iter++) {
+        // Alocar cada flor ao grupo mais próximo
+        for (int i = 0; i < tamanho; i++) {
+            double menor_distancia = calculo_distancia(vetor_flores[i], representantes[0]);
+            int indice_grupo = 1;
 
-    getline(arquivo_flores, linha); /* utilizando getline para ler o arquivo, com a finalidade de "quebrar" as virgulas que separam os dados.
-                                    neste caso foi ele foi utilizado para "retirar" a legenda do arquivo */
+            // Encontrar o representante mais próximo
+            for (int j = 1; j < k; j++) {
+                double distancia = calculo_distancia(vetor_flores[i], representantes[j]);
+                if (distancia < menor_distancia) {
+                    menor_distancia = distancia;
+                    indice_grupo = j;
+                }
+            }
 
-    tamanho -= 1; //tamanho teve seu total subtraido por 1, porque após a leitura do tamanho do arquivo o resultado considerava a legenda + as 150 linhas.
-    Flor *vetor_flores = new Flor[tamanho]; //criando um vetor dinamicamente e alocando na memoria.
+            // Atribuir o grupo ao representante mais próximo
+            vetor_flores[i].grupo = indice_grupo;
+        }
 
-      for (int i = 0; i < tamanho; i++) {
-          string largura, altura, especie;
-          getline(arquivo_flores, largura, ',');
-          getline(arquivo_flores, altura, ',');   
-          getline(arquivo_flores, especie);          
-          vetor_flores[i].petal_length = stod(largura); 
-          vetor_flores[i].petal_width = stod(altura); 
-          vetor_flores[i].variety = especie;
-          //Looping para ler todo o arquivo e em seguida, armazenar os dados no vetor que foi criado dinamicamente.
-      }
- 
-    cout << "Insira a quantidade de flores do conjunto para serem os representantes iniciais de seus grupos" << endl;
+        // Atualizar os representantes
+        for (int i = 0; i < k; i++) {
+            int grupo_size = 0;
+            double soma_largura = 0.0;
+            double soma_altura = 0.0;
+
+            for (int j = 0; j < tamanho; j++) {
+                if (vetor_flores[j].grupo == i) {
+                    grupo_size++;
+                    soma_largura += vetor_flores[j].petal_width;
+                    soma_altura += vetor_flores[j].petal_length;
+                }
+            }
+
+            if (grupo_size > 0) {
+                // Calcular o ponto médio das flores do grupo
+                representantes[i].petal_width = soma_largura / grupo_size;
+                representantes[i].petal_length = soma_altura / grupo_size;
+            }
+        }
+    }
+
+    // Liberar a memória alocada para os representantes
+    delete[] representantes;
+}
+
+void exportar_grupos_flores(int tamanho, Flor* vetor_flores){
+    ofstream arquivo_flores_grupos("flores_grupos.csv", ios::out);
+
+    arquivo_flores_grupos << left << setw(15) << "petal_length" << setw(15) << "petal_width" << setw(15) << "variety" << setw(15) << "group" << endl;
+
+    for (int i = 0; i < tamanho; i++) {
+        arquivo_flores_grupos << left << setw(15) << vetor_flores[i].petal_length << setw(15) << vetor_flores[i].petal_width << setw(15) << vetor_flores[i].variety << setw(1) << vetor_flores[i].grupo << endl;
+    }
+
+}
+
+int main() {
+    int tamanho = 0;
+    int k = 0;
+    string linha;
+    srand(time(NULL));
+
+    ifstream arquivo_flores("iris_petalas.csv", ios::in);
+
+    while (getline(arquivo_flores, linha)) {
+        tamanho++;
+    }
+
+    arquivo_flores.clear();
+    arquivo_flores.seekg(0, ios::beg);
+
+    getline(arquivo_flores, linha);
+
+    tamanho -= 1;
+    Flor* vetor_flores = new Flor[tamanho];
+
+    for (int i = 0; i < tamanho; i++) {
+        string largura, altura, especie;
+        getline(arquivo_flores, largura, ',');
+        getline(arquivo_flores, altura, ',');
+        getline(arquivo_flores, especie);
+        vetor_flores[i].petal_length = stod(largura);
+        vetor_flores[i].petal_width = stod(altura);
+        vetor_flores[i].variety = especie;
+    }
+
+    cout << "Digite a quantidade de grupos que voce deseja separar as flores: " << endl;
     cin >> k;
- 
-    representantes_iniciais(k, vetor_flores, tamanho);
 
-    for (int i = 0; i < tamanho; i++) { 
-          cout <<  i << " " << vetor_flores[i].grupo << endl;
-          //Looping para ler todo o arquivo e em seguida, armazenar os dados no vetor que foi criado dinamicamente.
-      }
+    int iteracoes = 100;
+
+    definicao_grupos(vetor_flores, tamanho, k, iteracoes);
+
+    exportar_grupos_flores(tamanho, vetor_flores);
 
     delete[] vetor_flores;
 
