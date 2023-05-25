@@ -120,7 +120,7 @@ int main() {
     cout << "Digite a quantidade de grupos que voce deseja separar as flores: " << endl;
     cin >> k;
 
-    int iteracoes = 00;
+    int iteracoes = 1000;
 
     definicao_grupos(vetor_flores, tamanho, k, iteracoes);
 
