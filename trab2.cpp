@@ -3,6 +3,7 @@
 #include <string>
 #include <iomanip>
 #include <cmath>
+#include <stdlib.h>
 using namespace std;
 
 struct Flor {
@@ -43,8 +44,6 @@ void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
                     indice_grupo = j;
                 }
             }
-
-            // Atribuir o grupo ao representante mais próximo
             vetor_flores[i].grupo = indice_grupo;
         }
 
@@ -69,8 +68,7 @@ void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
             }
         }
     }
-
-    // Liberar a memória alocada para os representantes
+    
     delete[] representantes;
 }
 
@@ -89,46 +87,51 @@ void exportar_grupos_flores(int tamanho, Flor* vetor_flores) {
 int main() {
     int tamanho = 0;
     int k = 0;
+    int iteracoes = 5000;      // declaração de variáveis.
     string linha;
     string legenda;
     srand(time(NULL));
 
-    ifstream arquivo_flores("iris_petalas.csv", ios::in);
+    ifstream arquivo_flores("iris_petalas.csv", ios::in);  //leitura do arquivo csv.
 
-    while (getline(arquivo_flores, linha)) {
+    while (getline(arquivo_flores, linha)) {  //leitura das linhas do arquivo csv, para determinar o tamanho do vetor a ser alocado dinamicamente.
         tamanho++;
     }
 
-    arquivo_flores.clear();
-    arquivo_flores.seekg(0, ios::beg);
+    arquivo_flores.clear();     
+    arquivo_flores.seekg(0, ios::beg);  // redefinindo o ponteiro para o ínicio do arquivo novamente.
 
-    getline(arquivo_flores, legenda);
+    getline(arquivo_flores, legenda); // "excluindo" a legenda do arquivo. Enviando-a para a variável legenda, onde ela será inutilizada.
 
-    tamanho -= 1;
-    Flor* vetor_flores = new Flor[tamanho];
+    tamanho -= 1; // subtraindo o tamanho por 1, devido a exclusão da legenda. Sendo assim, redefinindo a linha inicial do arquivo.
+    Flor* vetor_flores = new Flor[tamanho]; // declaração de um vetor dinamico para armazenar cada linha lida do arquivo.
 
-    for (int i = 0; i < tamanho; i++) {
-        string largura, altura, especie;
+    for (int i = 0; i < tamanho; i++) {               // looping para ler todas as linhas do arquivo.
+        string largura, altura, especie;        
         getline(arquivo_flores, largura, ',');
-        getline(arquivo_flores, altura, ',');
+        getline(arquivo_flores, altura, ',');          // variaveis para armazenar as strings que são "quebradas" pelo getline.
         getline(arquivo_flores, especie, '\n');
-        vetor_flores[i].petal_length = stod(largura);
+        vetor_flores[i].petal_length = stod(largura);  // conversão de string para número de tipo double. E atribuição dos valores para cada índice do vetor criado.
         vetor_flores[i].petal_width = stod(altura);
         vetor_flores[i].variety = especie;
     }
 
     cout << "Digite a quantidade de grupos que voce deseja separar as flores: " << endl;
-    cin >> k;
 
-    int iteracoes = 1000;
+    cin >> k; // variavel que armazena a quantidade de grupos escolhida pelo usuário.
 
-    definicao_grupos(vetor_flores, tamanho, k, iteracoes);
+    definicao_grupos(vetor_flores, tamanho, k, iteracoes); // chamando a função que define os representantes iniciais e a classificação dos grupos para cada flor.
 
-    exportar_grupos_flores(tamanho, vetor_flores);
+    exportar_grupos_flores(tamanho, vetor_flores); // função que escreve todos os dados calculados em um novo arquivo csv.
 
-    delete[] vetor_flores;
+    delete[] vetor_flores; // libera o espaço utilzado pelo vetor na memória.
 
-    arquivo_flores.close();
+    arquivo_flores.close(); // fecha o arquivo que foi importado(lido) pelo programa.
+
+    system("cls");
+
+    cout << "O arquivo com os grupos de separacao das flores foi criado com sucesso !!" << endl;
+    cout << endl;
 
     return 0;
 }
