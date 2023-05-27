@@ -1,3 +1,5 @@
+//Nome: João Victor Rocha. RA: 2177268
+
 #include <iostream>
 #include <fstream>
 #include <string>  //bibliotecas usadas no código.
@@ -52,7 +54,9 @@ void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
         }
 
         for (int i = 0; i < k; i++) {
+
             for (int j = 0; j < tamanho; j++) { //atualização do novo representante de cada grupo.
+            
                 if (vetor_flores[j].grupo == i) { //verificação para encontrar as flores que são do mesmo grupo que em o for externo esta percorrendo no momento.
                     membros_grupo++; //incremento do tamanho do grupo.
                     soma_largura += vetor_flores[j].petal_width; 
@@ -75,15 +79,13 @@ void exportar_grupos_flores(int tamanho, Flor* vetor_flores) { //escrita do novo
     for (int i = 0; i < tamanho; i++) {
         arquivo_flores_grupos << left << setw(15) << vetor_flores[i].petal_length << setw(15) << vetor_flores[i].petal_width << setw(15) << vetor_flores[i].variety << setw(15) << vetor_flores[i].grupo << endl;
     }
-
-    arquivo_flores_grupos.close();
 }
 
 int main() {
     
     int tamanho = 0;
     int k = 0;
-    int iteracoes = 10; //declaração de variáveis.
+    int iteracoes = 100; //declaração de variáveis.
     string linha;
     string legenda;
     srand(time(NULL));
@@ -123,6 +125,8 @@ int main() {
     delete[] vetor_flores; // libera o espaço na memória que foi utilzado pelo vetor.
 
     arquivo_flores.close(); // fecha o arquivo que foi importado(lido) pelo programa.
+    
+    system("cls");
 
     cout << "O arquivo com os grupos de cada flor foi criado com sucesso !!" << endl;
     cout << endl;
