@@ -27,9 +27,7 @@ double calculo_distancia(Flor flor, Flor representante) {
 }
 
 //formação dos grupos de flores que possuem fortes traços de similaridades.
-void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
-
-    Flor* flores_representantes = new Flor[k]; //vetor dinamico para armazenar os representantes de cada grupo.
+void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes, Flor* flores_representantes) {
 
     for (int i = 0; i < k; i++) {
 
@@ -75,7 +73,6 @@ void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes) {
         }
     }
     
-    delete[] flores_representantes; //desalocando o espaço ocupado na heap pelo vetor.
 }
 
 void exportar_grupos_flores(int tamanho, Flor* vetor_flores) { //escrita do novo arquivo csv com a quarta coluna de grupos.
@@ -101,6 +98,10 @@ int main() {
     string legenda;
     srand(time(NULL));
 
+    cout << "Digite a quantidade de grupos que voce deseja separar as flores: " << endl;
+
+    cin >> k; // variavel que armazena a quantidade de grupos escolhida pelo usuário.
+
     ifstream arquivo_flores("iris_petalas.csv", ios::in); //leitura do arquivo csv.
 
     while (getline(arquivo_flores, linha)) {  //leitura das linhas do arquivo csv, para determinar o tamanho do vetor a ser alocado dinamicamente.
@@ -115,6 +116,7 @@ int main() {
     tamanho -= 1; //subtraindo o tamanho por 1, devido a exclusão da legenda. Sendo assim, redefinindo a linha inicial do arquivo.
 
     Flor* vetor_flores = new Flor[tamanho]; //declaração de um vetor dinamico para armazenar cada linha lida do arquivo.
+    Flor* flores_representantes = new Flor[k]; //vetor dinamico para armazenar os representantes de cada grupo.
 
     for (int i = 0; i < tamanho; i++) {               //looping para ler todas as linhas do arquivo.
         string largura, altura, especie;        
@@ -126,15 +128,12 @@ int main() {
         vetor_flores[i].variety = especie;
     }
 
-    cout << "Digite a quantidade de grupos que voce deseja separar as flores: " << endl;
-
-    cin >> k; // variavel que armazena a quantidade de grupos escolhida pelo usuário.
-
-    definicao_grupos(vetor_flores, tamanho, k, iteracoes); // função que define os representantes iniciais e a classificação dos grupos para cada flor.
+    definicao_grupos(vetor_flores, tamanho, k, iteracoes, flores_representantes); // função que define os representantes iniciais e a classificação dos grupos para cada flor.
 
     exportar_grupos_flores(tamanho, vetor_flores); // função que escreve todos os dados calculados em um novo arquivo csv.
 
     delete[] vetor_flores; // libera o espaço na memória que foi utilzado pelo vetor.
+    delete[] flores_representantes;
 
     arquivo_flores.close(); // fecha o arquivo que foi importado(lido) pelo programa.
     
