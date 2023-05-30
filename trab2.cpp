@@ -93,7 +93,7 @@ int main() {
     
     int tamanho = 0;
     int k = 0;
-    int iteracoes = 10000; //declaração de variáveis.
+    int iteracoes = 10; //declaração de variáveis.
     string linha;
     string legenda;
     srand(time(NULL));
