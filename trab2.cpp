@@ -61,7 +61,7 @@ void definicao_grupos(Flor* vetor_flores, int tamanho, int k, int iteracoes, Flo
         for (int i = 0; i < k; i++) {
 
             for (int j = 0; j < tamanho; j++) { //atualização do novo representante de cada grupo.
-        
+            
                 if (vetor_flores[j].grupo == i) { //verificação para encontrar as flores que são do mesmo grupo que em o for externo esta percorrendo no momento.
                     membros_grupo++; //incremento do tamanho do grupo.
                     soma_largura += vetor_flores[j].petal_width; 
@@ -93,7 +93,7 @@ int main() {
     
     int tamanho = 0;
     int k = 0;
-    int iteracoes = 10; //declaração de variáveis.
+    int iteracoes = 2000; //declaração de variáveis.
     string linha;
     string legenda;
     srand(time(NULL));
